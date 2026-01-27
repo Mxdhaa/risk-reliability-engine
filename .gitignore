@@ -18,7 +18,6 @@ data/*.csv
 
 # keep artifacts folder, but ignore heavy raw outputs
 artifacts/**/*.parquet
-artifacts/**/*.csv
 artifacts/**/*.pkl
 artifacts/**/*.joblib
 
