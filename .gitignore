@@ -1,0 +1,17 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Generated artifacts (don’t push results)
+artifacts/*.csv
+artifacts/*.parquet
+artifacts/*.json
+
+# Data
+data/*.csv
