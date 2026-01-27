@@ -15,3 +15,16 @@ artifacts/*.json
 
 # Data
 data/*.csv
+
+# keep artifacts folder, but ignore heavy raw outputs
+artifacts/**/*.parquet
+artifacts/**/*.csv
+artifacts/**/*.pkl
+artifacts/**/*.joblib
+
+# allow images and readmes
+!artifacts/**/*.png
+!artifacts/**/*.jpg
+!artifacts/**/*.jpeg
+!artifacts/**/*.svg
+!artifacts/**/README.md
