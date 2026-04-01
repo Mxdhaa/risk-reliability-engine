@@ -1,0 +1,44 @@
+[
+  {
+    "feature_removed": "None (full model)",
+    "auc": 0.708,
+    "prauc": 0.098,
+    "delta_auc": 0.0,
+    "delta_prauc": 0.0
+  },
+  {
+    "feature_removed": "sigma_hat",
+    "auc": 0.655,
+    "prauc": 0.087,
+    "delta_auc": 0.053,
+    "delta_prauc": 0.011
+  },
+  {
+    "feature_removed": "risk_mismatch",
+    "auc": 0.66,
+    "prauc": 0.058,
+    "delta_auc": 0.048,
+    "delta_prauc": 0.04
+  },
+  {
+    "feature_removed": "loss_minus_risk",
+    "auc": 0.674,
+    "prauc": 0.072,
+    "delta_auc": 0.034,
+    "delta_prauc": 0.026
+  },
+  {
+    "feature_removed": "abs_loss",
+    "auc": 0.695,
+    "prauc": 0.083,
+    "delta_auc": 0.013,
+    "delta_prauc": 0.015
+  },
+  {
+    "feature_removed": "vol_mom",
+    "auc": 0.713,
+    "prauc": 0.065,
+    "delta_auc": -0.005,
+    "delta_prauc": 0.032
+  }
+]

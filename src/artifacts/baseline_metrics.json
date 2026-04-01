@@ -1,0 +1,17 @@
+{
+  "LogisticRegression": {
+    "model": "LogisticRegression",
+    "auc_val": 0.7323094079480941,
+    "auc_test": 0.7549657789019492,
+    "prauc_val": 0.08961300329535647,
+    "prauc_test": 0.0791644032282599,
+    "brier_val": 0.023302628484151783,
+    "brier_test": 0.03306153864500703
+  },
+  "VolThreshold": {
+    "model": "VolThreshold",
+    "auc_test": 0.5093072741577855,
+    "prauc_test": 0.03427788077805361,
+    "brier_test": NaN
+  }
+}

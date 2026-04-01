@@ -1,0 +1,22 @@
+{
+  "xgboost": {
+    "auc": 0.706,
+    "prauc": 0.13,
+    "brier": 0.0324,
+    "esb_base": 0.0323,
+    "esb_gated": 0.0186
+  },
+  "rcre": {
+    "auc": 0.703,
+    "prauc": 0.125,
+    "brier": 0.0323,
+    "esb_base": 0.0323,
+    "esb_gated": 0.0143
+  },
+  "lr": {
+    "auc": 0.755
+  },
+  "volthresh": {
+    "auc": 0.509
+  }
+}

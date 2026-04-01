@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lllllll}
+\toprule
+model & auc_test & prauc_test & brier_test & esb_base & esb_gated & avg_exposure \\
+\midrule
+VolThreshold (baseline) & 0.5093 & 0.0343 & — & — & — & — \\
+LogisticRegression (baseline) & 0.7550 & 0.0792 & 0.0331 & 0.0323 & — & — \\
+XGBoost (ours) & 0.7061 & 0.1296 & 0.0324 & 0.0323 & 0.0186 & 0.6812 \\
+RCRE (ours, novel) & 0.7027 & 0.1252 & 0.0323 & 0.0323 & 0.0143 & 0.7785 \\
+\bottomrule
+\end{tabular}
+\caption{Discrimination, calibration, and operational metrics on the test block.}
+\label{tab:main_results}
+\end{table}
