@@ -31,3 +31,15 @@ artifacts/**/*.joblib
 # Local compiler binary
 tectonic.exe
 
+# Figures and tables not utilized in the paper
+artifacts/figure3.png
+artifacts/figure4.png
+artifacts/figure5.png
+artifacts/table_covid_regimes.png
+artifacts/fig_covid_breach_magnitudes.png
+artifacts/fig_covid_timeseries.png
+artifacts/results_table.tex
+artifacts/table_covid_regimes.tex
+artifacts/table_covid_regimes.csv
+
+
