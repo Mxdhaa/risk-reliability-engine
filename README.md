@@ -16,24 +16,25 @@ Risk desks consume VaR reports with a 1-day reporting lag. During volatility reg
 
 ### Cross-Asset Discrimination (ROC-AUC)
 
-| Asset | Vol Threshold | Logistic Reg | XGBoost | RCRE (ours) |
-|-------|:---:|:---:|:---:|:---:|
-| S&P 500 | 0.508 | 0.755 | 0.646 | **0.669** |
-| FTSE 100 | 0.498 | 0.712 | 0.718 | **0.699** |
-| Nikkei 225 | 0.496 | 0.650 | 0.614 | **0.567** |
-| DAX | 0.497 | 0.736 | 0.648 | **0.631** |
-| Hang Seng | 0.542 | 0.644 | 0.567 | **0.533** |
-| EM ETF | 0.500 | 0.611 | 0.551 | **0.531** |
+| Asset | Vol Threshold | Logistic Reg | XGBoost | RCRE (ours) | ESB Redn. |
+|-------|:---:|:---:|:---:|:---:|:---:|
+| S&P 500 | 0.508 | 0.738 | 0.686 | **0.705** | **51%** |
+| FTSE 100 | ~0.50 | 0.693 | **0.724** | 0.692 | **50%** |
+| Nikkei 225 | ~0.50 | 0.620 | 0.614 | **0.587** | **56%** |
+| DAX | ~0.50 | 0.699 | 0.666 | **0.669** | **49%** |
+| Hang Seng | ~0.50 | 0.650 | 0.582 | **0.578** | **69%** |
+| EM ETF | ~0.50 | 0.675 | 0.582 | **0.521** | **51%** |
+| **Mean** | **~0.50** | **0.679** | **0.642** | **0.625** | **54%** |
 
 ### Tail Severity Reduction (Expected Shortfall Breach)
 
 | Policy | ESB | Reduction |
 |--------|:---:|:---:|
 | No gating (baseline) | 0.0323 | — |
-| XGBoost-gated | 0.0137 | **58%** |
-| RCRE-gated | 0.0168 | **48%** |
+| XGBoost-gated | 0.0186 | **42%** |
+| RCRE-gated (ours) | 0.0143 | **56%** |
 
-> ESB reduction of **42–63% holds consistently across all 6 markets.**
+> ESB reduction of **42–69% holds consistently across all 6 markets.**
 
 ---
 
@@ -41,7 +42,7 @@ Risk desks consume VaR reports with a 1-day reporting lag. During volatility reg
 
 The reliability monitor was evaluated on the COVID-19 crash (Feb–May 2020) as a **fully held-out** stress period — never seen during training or calibration.
 
-![COVID Figure](artifacts/fig3.png)
+![COVID Figure](artifacts/fig4_covid_rcre.png)
 
 The monitor triggered de-risking ahead of both main crash waves, demonstrating early warning capability when the delayed HS-VaR was most stale.
 
@@ -139,7 +140,7 @@ python multi_asset.py
 python ablation.py
 ```
 
-Output artifacts are written to `src/artifacts/`:
+Output artifacts are written to `artifacts/`:
 - `preds.csv` — predictions, labels, scores per day
 - `fit_metrics.json` — discrimination and calibration metrics
 - `multi_asset_results.csv` — cross-asset results table
@@ -169,7 +170,7 @@ risk-reliability-engine/
 
 ---
 
-## Paper
+## Publication
 
-> *Predicting Decision-Time Reliability of Equity Market Risk under Delayed Inputs and Non-Stationary Conditions*
-> Anonymous Submission — arXiv preprint coming soon.
+> **Predicting Decision-Time Reliability of Equity Market Risk under Delayed Inputs and Non-Stationary Conditions**
+> Accepted at the **7th ACM International Conference on AI in Finance (ICAIF '26)**, Milan, Italy, November 2026.
