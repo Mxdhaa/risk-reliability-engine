@@ -36,6 +36,11 @@ def main():
     )
     y = make_labels_next_day(r, df["var_base"], cfg.gamma)
 
+    # Drop NaNs to align indices with multi-asset validation
+    valid = X.dropna().index.intersection(y.dropna().index)
+    X = X.loc[valid]
+    y = y.loc[valid]
+
     os.makedirs("artifacts", exist_ok=True)
 
     # ── 2. XGBoost + Isotonic Calibration (existing model) ───
@@ -47,18 +52,18 @@ def main():
 
     # ── 3. Baselines ─────────────────────────────────────────
     print("Training baselines...")
-    baseline_results, lr_model, vt_model = run_all_baselines(X, y, df["sigma_hat"], cfg)
+    baseline_results, lr_model, vt_model = run_all_baselines(X, y, df["sigma_hat"].loc[valid], cfg)
     save_json("artifacts/baseline_metrics.json", baseline_results)
 
     # ── 4. Regime Detector ───────────────────────────────────
     print("Fitting regime detector...")
     regime_detector = RegimeDetector(
         n_regimes=cfg.n_regimes,
-        vol_series=df["sigma_hat"],
+        vol_series=df["sigma_hat"].loc[valid],
         train_ratio=cfg.train_ratio,
     )
     regime_detector.fit()
-    regimes = regime_detector.predict(df["sigma_hat"])
+    regimes = regime_detector.predict(df["sigma_hat"].loc[valid])
     df["regime"] = regimes
 
     # ── 5. RCRE (Novel Algorithm) ────────────────────────────
@@ -95,9 +100,8 @@ def main():
     df["pi_xgb"]  = gate_policy(df["s_score"],      cfg.tau_low, cfg.tau_high, cfg.phi)
     df["pi_rcre"] = gate_policy(df["s_score_rcre"],  cfg.tau_low, cfg.tau_high, cfg.phi)
 
-    n = len(df)
-    test_start = int(n * (cfg.train_ratio + cfg.val_ratio))
-    test_df = df.iloc[test_start:].copy()
+    # Use the exact same test split index as the model to avoid validation leakage
+    test_df = df.loc[X_te.index].copy()
 
     decision_metrics_xgb = compute_metrics_v2(
         test_df["logret"], test_df["var_base"], test_df["pi_xgb"],  cfg.alpha

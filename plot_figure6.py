@@ -23,8 +23,8 @@ ASSETS = {
 
 # Real values from the pipeline execution (rounded to nearest integer)
 ESB_REDUCTIONS = {
-    "GSPC": 51, "FTSE": 50, "N225": 56,
-    "GDAXI": 49, "HSI": 69, "EEM": 51,
+    "GSPC": 50, "FTSE": 50, "N225": 56,
+    "GDAXI": 49, "HSI": 69, "EEM": 53,
 }
 
 gamma    = 0.8

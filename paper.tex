@@ -50,9 +50,9 @@ value---and that removing noisy features improves XGBoost ROC-AUC from
 0.642 to 0.704. We compare four models across six global equity markets:
 S\&P~500, FTSE~100, Nikkei~225, DAX, Hang~Seng, and EM ETF. A
 reliability-gated three-level exposure policy reduces Expected Shortfall
-Breach (ESB) by 42--67\% consistently across all six assets. Our novel
+Breach (ESB) by 49--69\% consistently across all six assets. Our novel
 \textbf{Regime-Conditional Reliability Estimator} (RCRE) achieves the
-best tail-severity reduction (56\% ESB reduction on S\&P~500) via soft
+best tail-severity reduction (50\% ESB reduction on S\&P~500) via soft
 Gaussian regime mixing. The COVID-19 volatility shock, used as a fully
 held-out stress test, confirms early warning capability during the acute
 mid-March crash window.
@@ -178,7 +178,7 @@ estimator}, a problem not previously studied.
 \paragraph{Safety-critical ML.}
 Decision-centric robustness~\cite{chow2022decision}, isotonic
 calibration~\cite{zadrozny2002transforming}, and
-SHAP~\cite{lundberg2017shap} are combined here for market risk,
+SHAP~\cite{lundberg2017unified} are combined here for market risk,
 consistent with ECB guidance on model monitoring~\cite{ecb2024guide}.
 
 %%─────────────────────────────────────────────────────────────
@@ -343,27 +343,27 @@ AUC measures discrimination; ESB and Brier score measure the operational objecti
 
 \subsection{Discrimination: S\&P 500}
 
-Table~\ref{tab:disc} reports test-block results on S\&P~500. The volatility threshold achieves AUC~0.508, confirming that raw volatility level is insufficient as a predictor. The 7-feature XGBoost achieves AUC~0.642; ablation-guided pruning to 5 features improves this to 0.704 (+0.062), demonstrating that feature quality matters more than feature quantity. RCRE (AUC~0.703) matches the pruned XGBoost on discrimination and achieves the best Brier score (0.0323), indicating superior calibration. Logistic regression (AUC~0.755) remains competitive, reflecting the strong linear component of the risk-volatility divergence feature. The gap between AUC and operational utility is addressed in Section~\ref{sec:rcr-lr}.
+Table~\ref{tab:disc} reports test-block results on S\&P~500. The volatility threshold achieves AUC~0.507, confirming that raw volatility level is insufficient as a predictor. The 7-feature XGBoost achieves AUC~0.642; ablation-guided pruning to 5 features improves this to 0.685 (+0.043), demonstrating that feature quality matters more than feature quantity. RCRE (AUC~0.705) outperforms the pruned XGBoost on discrimination and achieves competitive calibration (Brier score 0.0334). Logistic regression (AUC~0.737) remains competitive, reflecting the strong linear component of the risk-volatility divergence feature. The gap between AUC and operational utility is addressed in Section~\ref{sec:rcr-lr}.
 
 \begin{table}[t]
-\caption{S\&P~500 test-block discrimination and calibration. Ablation improves XGBoost AUC by $+0.062$. RCRE achieves best Brier score.}
+\caption{S\&P~500 test-block discrimination and calibration. Ablation improves XGBoost AUC by $+0.043$. RCRE achieves best AUC among non-linear models.}
 \label{tab:disc}
 \begin{tabular}{lcccc}
 \toprule
 Model & AUC & PR-AUC & Brier & Cal. \\
 \midrule
-Vol.\ Threshold   & 0.508 & ---   & ---    & No  \\
-Logistic Reg.\    & 0.755 & ---   & ---    & Yes \\
-XGBoost 7-feat    & 0.642 & 0.056 & 0.034  & Yes \\
-XGBoost 5-feat    & 0.704 & 0.130 & 0.0324 & Yes \\
-RCRE (ours)       & \textbf{0.703} & 0.125 & \textbf{0.0323} & Yes \\
+Vol.\ Threshold   & 0.507 & ---   & ---    & No  \\
+Logistic Reg.\    & 0.737 & ---   & 0.0335 & Yes \\
+XGBoost 7-feat    & 0.642 & 0.056 & 0.0340 & Yes \\
+XGBoost 5-feat    & 0.685 & \textbf{0.116} & \textbf{0.0329} & Yes \\
+RCRE (ours)       & \textbf{0.705} & 0.108 & 0.0334 & Yes \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{SHAP Interpretability}
 
-To validate ablation findings via an independent method, we apply SHAP TreeExplainer~\cite{lundberg2017shap} on the held-out test set. SHAP and leave-one-out ablation are methodologically independent: one measures prediction decomposition, the other measures performance degradation. Agreement between them constitutes strong evidence that the identified signal is real.
+To validate ablation findings via an independent method, we apply SHAP TreeExplainer~\cite{lundberg2017unified} on the held-out test set. SHAP and leave-one-out ablation are methodologically independent: one measures prediction decomposition, the other measures performance degradation. Agreement between them constitutes strong evidence that the identified signal is real.
 
 Table~\ref{tab:shap} reports mean absolute SHAP values per feature. Risk-volatility divergence dominates at mean$|\text{SHAP}|{=}1.114$, approximately $2\times$ the next feature (volatility momentum, 0.570). This independently confirms the ablation finding ($\Delta\text{AUC} = -0.079$). All five features rank in the same order under both methods.
 
@@ -402,34 +402,32 @@ frequency rises while actual exposure falls. The monitor converts rare
 catastrophic losses into more frequent but materially smaller breaches.
 \end{definition}
 
-Table~\ref{tab:operational} shows RCRE gating reduces ESB from 0.0323
-to 0.0143 (56\%). This is the paper's most practically important
+Table~\ref{tab:operational} shows RCRE gating reduces ESB from 0.0321 to 0.0159 (50\%). This is the paper's most practically important
 finding: a risk manager cares about \emph{how large} each breach is,
 not merely \emph{how often}---a distinction that violation-counting
 backtests miss entirely.
 
 \begin{table}[t]
-\caption{S\&P~500 operational metrics. RCRE achieves 56\% ESB reduction
-while preserving higher average exposure than XGBoost.}
+\caption{S\&P~500 operational metrics. RCRE achieves 50\% ESB reduction while maintaining similar average exposure to XGBoost.}
 \label{tab:operational}
 \small
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Policy} & \textbf{ESB\textsubscript{base}} & \textbf{ESB\textsubscript{gated}} & \textbf{Redn.} & \textbf{Exp.} \\
 \midrule
-No gating         & 0.0323 & 0.0323 & 0\%  & 1.00 \\
-XGBoost-gated     & 0.0323 & 0.0186 & 42\% & 0.80 \\
-RCRE-gated (ours) & 0.0323 & \textbf{0.0143} & \textbf{56\%} & 0.82 \\
+No gating         & 0.0321 & 0.0321 & 0\%  & 1.00 \\
+XGBoost-gated     & 0.0321 & 0.0186 & 42\% & 0.67 \\
+RCRE-gated (ours) & 0.0321 & \textbf{0.0159} & \textbf{50\%} & 0.67 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Multi-Asset Validation}
 
-Table~\ref{tab:crossasset} reports cross-asset results. The volatility threshold achieves AUC $\approx$ 0.50 on every asset without exception, confirming universal failure of the naive heuristic. XGBoost outperforms logistic regression on FTSE 100 (0.740 vs 0.709), showing that non-linear regime structure is asset-dependent. ESB reduction ranges from 42\% to 67\% across all six markets, as shown in Figure~\ref{fig:aperture_all_assets}, confirming that the aperture effect identified on S\&P 500 is not market-specific.
+Table~\ref{tab:crossasset} reports cross-asset results. The volatility threshold achieves AUC $\approx$ 0.50 on every asset without exception, confirming universal failure of the naive heuristic. XGBoost outperforms logistic regression on FTSE 100 (0.724 vs 0.693), showing that non-linear regime structure is asset-dependent. ESB reduction ranges from 49\% to 69\% across all six markets, as shown in Figure~\ref{fig:aperture_all_assets}, confirming that the aperture effect identified on S\&P 500 is not market-specific.
 
 \begin{table}[t]
-\caption{Cross-asset validation. ESB reduction 42--69\% on all
+\caption{Cross-asset validation. ESB reduction 49--69\% on all
 markets. VT near-random everywhere. (VT AUC $\approx$0.50 on all
 assets omitted for space.)}
 \label{tab:crossasset}
@@ -437,14 +435,14 @@ assets omitted for space.)}
 \toprule
 Asset & LR & XGB & RCRE & ESB Redn. \\
 \midrule
-S\&P~500   & 0.738 & 0.686 & \textbf{0.705} & 51\% \\
+S\&P~500   & 0.737 & 0.685 & \textbf{0.705} & 50\% \\
 FTSE~100   & 0.693 & 0.724 & 0.692 & 50\% \\
-Nikkei~225 & 0.620 & 0.614 & \textbf{0.587} & 56\% \\
+Nikkei~225 & 0.614 & 0.605 & \textbf{0.578} & 56\% \\
 DAX        & 0.699 & 0.666 & \textbf{0.669} & 49\% \\
-Hang Seng  & 0.650 & 0.582 & \textbf{0.578} & 69\% \\
-EM ETF     & 0.675 & 0.582 & 0.521 & 51\% \\
+Hang Seng  & 0.651 & 0.582 & \textbf{0.578} & 69\% \\
+EM ETF     & 0.675 & 0.586 & 0.521 & 53\% \\
 \midrule
-Mean       & 0.679 & 0.642 & 0.625 & 54\% \\
+Mean       & 0.678 & 0.641 & 0.624 & 55\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -518,11 +516,11 @@ Risk-volatility divergence is the dominant signal under both ablation ($\Delta\t
 
 Logistic regression achieves AUC~0.755 on S\&P~500 despite capturing only linear signal. The dominant relationship between features and failure probability is approximately monotone, particularly for risk-volatility divergence. XGBoost's non-linear capacity is not needed for this primary signal and, at a 3\% positive rate, is more susceptible to overfitting.
 
-However, \textbf{AUC is not the operational objective.} The gating policy acts on calibrated probabilities; what matters is whether the monitor assigns high probabilities before high-severity losses. RCRE achieves the best Brier score (0.0323) and ESB reduction (56\%) because regime-specialised calibration allocates probability mass more accurately at the extremes. LR's higher AUC reflects stronger linear separation globally; RCRE's better Brier score reflects more accurate probability assignment locally, in the tail where gating decisions are made. For operational risk management, the latter is what matters.
+However, \textbf{AUC is not the operational objective.} The gating policy acts on calibrated probabilities; what matters is whether the monitor assigns high probabilities before high-severity losses. RCRE achieves competitive calibration (Brier score 0.0334) and strong ESB reduction (50\%) because regime-specialised calibration allocates probability mass more accurately at the extremes. LR's higher AUC reflects stronger linear separation globally; RCRE's competitive Brier score reflects accurate probability assignment locally, in the tail where gating decisions are made. For operational risk management, the latter is what matters.
 
 \subsection{RCRE vs Single-Model Approaches}
 
-RCRE outperforms XGBoost on Brier score and ESB reduction on S\&P~500 (56\% vs 42\%) and achieves competitive AUC across assets. The crisis-regime classifier specialises on stress distributions, producing better-calibrated high probabilities that trigger gating at more appropriate times. RCRE's soft mixing produces a more conservative and smoother policy than XGBoost, preserving more expected return while providing strong tail protection. On assets where linear signal dominates (Nikkei~225, EM~ETF), the single-model XGBoost outperforms RCRE on AUC, but ESB reduction remains strong, confirming that the operational objective is decoupled from discrimination on these markets.
+RCRE outperforms XGBoost on ESB reduction on S\&P~500 (50\% vs 42\%) and achieves competitive AUC across assets. The crisis-regime classifier specialises on stress distributions, producing better-calibrated high probabilities that trigger gating at more appropriate times. RCRE's soft mixing produces a more conservative and smoother policy than XGBoost, preserving more expected return while providing strong tail protection. On assets where linear signal dominates (Nikkei~225, EM~ETF), the single-model XGBoost outperforms RCRE on AUC, but ESB reduction remains strong, confirming that the operational objective is decoupled from discrimination on these markets.
 
 \subsection{Limitations and Estimator Dependency}
 \label{sec:limitations}
@@ -557,7 +555,7 @@ We presented a reliability prediction layer for delayed risk
 infrastructure, treating VaR model validity as a supervised monitoring
 problem under strict information timing. Leave-one-out ablation and SHAP
 independently identified risk-volatility divergence as the dominant
-signal, improving XGBoost AUC from 0.642 to 0.704 via feature pruning. RCRE achieves the best tail-severity reduction (56\% ESB reduction on S\&P 500) via regime-conditional soft mixing, outperforming on the operational objective despite comparable discrimination. Six-asset validation shows ESB reduction of 42--67\% across US, European, and Asian markets, and the COVID-19 case study confirms early warning capability during the acute mid-March crash on a fully held-out stress period.
+signal, improving XGBoost AUC from 0.642 to 0.685 via feature pruning. RCRE achieves the best tail-severity reduction (50\% ESB reduction on S\&P 500) via regime-conditional soft mixing, outperforming on the operational objective despite comparable discrimination. Six-asset validation shows ESB reduction of 49--69\% across US, European, and Asian markets, and the COVID-19 case study confirms early warning capability during the acute mid-March crash on a fully held-out stress period.
 
 The aperture effect is the key mechanism behind these results and is invisible to traditional backtesting. An evaluation framework that counts violations without sizing them systematically undervalues predictive reliability monitors. These results establish reliability monitoring as a practical, model-agnostic add-on for legacy risk systems operating under reporting latency and non-stationary market conditions.
 
