@@ -47,7 +47,7 @@ information. Leave-one-out ablation and SHAP analysis independently
 confirm that risk-volatility divergence is the dominant predictive
 signal---dominant by a $2\times$ margin in mean absolute SHAP
 value---and that removing noisy features improves XGBoost ROC-AUC from
-0.642 to 0.704. We compare four models across six global equity markets:
+0.642 to 0.685. We compare four models across six global equity markets:
 S\&P~500, FTSE~100, Nikkei~225, DAX, Hang~Seng, and EM ETF. A
 reliability-gated three-level exposure policy reduces Expected Shortfall
 Breach (ESB) by 49--69\% consistently across all six assets. Our novel
@@ -213,7 +213,7 @@ We construct a 7-feature candidate set and perform leave-one-out ablation to ide
 \end{equation}
 
 \begin{table}[t]
-\caption{Feature ablation results. Positive $\Delta$AUC means removal improves the model (noise feature). The pruned 5-feature model achieves AUC 0.704 vs 0.642 for the full 7-feature set.}
+\caption{Feature ablation results. Positive $\Delta$AUC means removal improves the model (noise feature). The pruned 5-feature model achieves AUC 0.685 vs 0.642 for the full 7-feature set.}
 \label{tab:ablation}
 \small
 \begin{tabular}{llcc}
@@ -565,8 +565,7 @@ The aperture effect is the key mechanism behind these results and is invisible t
 \begin{thebibliography}{26}
 
 \bibitem{arimond2020deep}
-T.~Arimond et~al. 2020. Deep learning for volatility forecasting in financial
-markets. \textit{Journal of Financial Data Science}.
+A.~Arimond, D.~Borth, A.~Hoepner, M.~Klawunn, and S.~Weisheit. 2020. Neural Networks and Value at Risk. \textit{arXiv preprint arXiv:2012.08333} (2020).
 
 \bibitem{bollerslev1986generalized}
 T.~Bollerslev. 1986. Generalized autoregressive conditional heteroscedasticity.
@@ -598,7 +597,7 @@ M.~Dixon, I.~Halperin, and P.~Bilokon. 2020.
 \textit{Machine Learning in Finance}. Springer.
 
 \bibitem{ecb2024guide}
-European Central Bank. 2024. \textit{Guide to Internal Models}.
+European Central Bank. 2024. \textit{Guide to Internal Models: General Chapter}. European Central Bank. Available at: \url{https://www.bankingsupervision.europa.eu/ecb/pub/pdf/ssm.guideinternalmodels202402.en.pdf}.
 
 \bibitem{embrechts2002correlation}
 P.~Embrechts, A.~McNeil, and D.~Straumann. 2002. Correlation and dependence
@@ -617,11 +616,6 @@ shift in time series forecasting. In \textit{AAAI 2023}.
 \bibitem{gaglianone2022evaluating}
 A.~Gaglianone et~al. 2022. Evaluating backtests of VaR and expected shortfall.
 \textit{Journal of Risk and Financial Management}.
-
-\bibitem{gneiting2011making}
-T.~Gneiting. 2011. Making and evaluating point forecasts.
-\textit{Journal of the American Statistical Association}
-106, 494 (2011), 746--762.
 
 \bibitem{hamilton1989new}
 J.~D. Hamilton. 1989. A new approach to the economic analysis of nonstationary
@@ -654,11 +648,6 @@ N.~Nolde and J.~F. Ziegel. 2017. Elicitability and backtesting.
 Basel Committee on Banking Supervision. 2019.
 \textit{Minimum Capital Requirements for Market Risk}.
 Bank for International Settlements.
-
-\bibitem{platt1999probabilistic}
-J.~Platt. 1999. Probabilistic outputs for support vector machines and
-comparisons to regularized likelihood methods.
-\textit{Advances in Large Margin Classifiers}.
 
 \bibitem{zadrozny2002transforming}
 B.~Zadrozny and C.~Elkan. 2002. Transforming classifier scores into accurate
