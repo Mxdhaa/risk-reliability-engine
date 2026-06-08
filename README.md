@@ -170,7 +170,7 @@ risk-reliability-engine/
 
 ---
 
-## Publication
+## Paper
 
-> **Predicting Decision-Time Reliability of Equity Market Risk under Delayed Inputs and Non-Stationary Conditions**
-> Accepted at the **7th ACM International Conference on AI in Finance (ICAIF '26)**, Milan, Italy, November 2026.
+> *Predicting Decision-Time Reliability of Equity Market Risk under Delayed Inputs and Non-Stationary Conditions*
+> Anonymous Submission — arXiv preprint coming soon.
