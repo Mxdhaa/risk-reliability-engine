@@ -8,16 +8,19 @@ def killer_plot(df: pd.DataFrame, start: str, end: str, tau_high: float, title: 
     ax1 = fig.add_subplot(3, 1, 1)
     ax1.plot(w.index, w["close"])
     ax1.set_title(title)
-    ax1.set_ylabel("Price")
+    ax1.set_ylabel("Price", fontsize=12)
+    ax1.tick_params(axis="both", labelsize=12)
 
     ax2 = fig.add_subplot(3, 1, 2, sharex=ax1)
     ax2.plot(w.index, w["var_base"])
-    ax2.set_ylabel("Baseline VaR (loss)")
+    ax2.set_ylabel("Baseline VaR (loss)", fontsize=12)
+    ax2.tick_params(axis="both", labelsize=12)
 
     ax3 = fig.add_subplot(3, 1, 3, sharex=ax1)
     ax3.plot(w.index, w["s_score"])
-    ax3.set_ylabel("Reliability score (P[failure])")
+    ax3.set_ylabel("Reliability score (P[failure])", fontsize=12)
     ax3.set_ylim(-0.05, 1.05)
+    ax3.tick_params(axis="both", labelsize=12)
 
     # Shade "detection zone" where failure probability is high (>= tau_high)
     if "s_score" in w.columns:
@@ -28,4 +31,7 @@ def killer_plot(df: pd.DataFrame, start: str, end: str, tau_high: float, title: 
             ax2.fill_between(w.index, w["var_base"].min(), w["var_base"].max(), where=mask, alpha=0.08)
 
     plt.tight_layout()
-    plt.show()
+    import os
+    os.makedirs("artifacts", exist_ok=True)
+    plt.savefig("artifacts/killer_plot.png", dpi=300)
+    plt.close()

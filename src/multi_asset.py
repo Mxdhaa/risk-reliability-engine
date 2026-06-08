@@ -4,11 +4,6 @@ multi_asset.py
 Runs the full reliability monitoring pipeline across multiple assets,
 producing a cross-asset results table for the paper.
 
-Why this matters:
-  A single-asset evaluation (S&P 500 only) is the weakest point of the
-  original paper. Reviewers at ICAIF or AAAI will immediately ask:
-  "Does this generalise?" This module answers that.
-
 Assets covered (all available via Yahoo Finance):
   Equities  : ^GSPC (S&P 500), ^FTSE (FTSE 100), ^N225 (Nikkei),
               ^GDAXI (DAX), ^HSI (Hang Seng)
@@ -109,10 +104,41 @@ def run_single_asset(ticker: str, cfg: Config) -> dict:
         s_rcre = s.copy()
         rcre_auc = float("nan")
 
-    # Gating metrics (XGBoost)
+    # Gating metrics and per-day save output
     df_valid = df.loc[valid].copy()
-    df_valid["s_score"] = s
-    df_valid["pi"]      = gate_policy(s, cfg.tau_low, cfg.tau_high, cfg.phi)
+    df_valid["s_score"]     = s
+    df_valid["s_score_rcre"] = s_rcre
+    df_valid["pi_xgb"]      = gate_policy(s, cfg.tau_low, cfg.tau_high, cfg.phi)
+    df_valid["pi_rcre"]     = gate_policy(s_rcre, cfg.tau_low, cfg.tau_high, cfg.phi)
+    df_valid["pi"]          = df_valid["pi_rcre"]
+    df_valid["regime"]      = regimes
+    df_valid["y"]           = y
+
+    # Compute soft mixing weights w_k(t)
+    try:
+        soft_w = rcre._soft_weights(df_valid["regime"])
+        soft_w.columns = ["w_0", "w_1", "w_2"]
+    except Exception:
+        soft_w = pd.DataFrame(np.nan, index=df_valid.index, columns=["w_0", "w_1", "w_2"])
+
+    preds_out = pd.DataFrame({
+        "date": df_valid.index,
+        "s_rcre": df_valid["s_score_rcre"],
+        "s_xgb":  df_valid["s_score"],
+        "pi_rcre": df_valid["pi_rcre"],
+        "pi_xgb":  df_valid["pi_xgb"],
+        "loss":    (-df_valid["logret"]).values,
+        "var_base": df_valid["var_base"],
+        "regime":   df_valid["regime"],
+        "y":        df_valid["y"],
+        "w_0":     soft_w["w_0"].values,
+        "w_1":     soft_w["w_1"].values,
+        "w_2":     soft_w["w_2"].values,
+    })
+    preds_out.to_csv(
+        f"artifacts/preds_{ticker.replace('^', '')}.csv",
+        index=False
+    )
 
     n = len(df_valid)
     test_start = int(n * (cfg.train_ratio + cfg.val_ratio))
@@ -123,7 +149,8 @@ def run_single_asset(ticker: str, cfg: Config) -> dict:
         esb_base  = dm["esb_base"]
         esb_gated = dm["esb_gated"]
         avg_exp   = dm["avg_exposure"]
-    except Exception:
+    except Exception as e:
+        print(f"  [{ticker}] Gating evaluation failed: {e}")
         esb_base = esb_gated = avg_exp = float("nan")
 
     return {

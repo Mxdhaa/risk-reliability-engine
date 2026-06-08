@@ -27,3 +27,7 @@ artifacts/**/*.joblib
 !artifacts/**/*.jpeg
 !artifacts/**/*.svg
 !artifacts/**/README.md
+
+# Local compiler binary
+tectonic.exe
+

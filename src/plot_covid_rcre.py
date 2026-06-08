@@ -7,6 +7,15 @@ Saves: artifacts/fig4_covid_rcre.png
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+import matplotlib
+matplotlib.rcParams['font.family'] = 'serif'
+matplotlib.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Liberation Serif', 'serif']
+matplotlib.rcParams['font.weight'] = 'bold'
+matplotlib.rcParams['axes.labelweight'] = 'bold'
+matplotlib.rcParams['xtick.labelsize'] = 14.5
+matplotlib.rcParams['ytick.labelsize'] = 14.5
+
 import os
 
 from config import Config
@@ -88,7 +97,7 @@ def plot_covid_rcre(save_dir="artifacts"):
                              gridspec_kw={"height_ratios": [1.2, 1, 1.4]})
     fig.suptitle(
         "Figure 4: COVID-19 Stress Test  |  RCRE Reliability Monitor  |  S&P 500",
-        fontsize=12, fontweight="bold", y=0.99
+        fontsize=16, fontweight="bold", y=0.99
     )
     sc = "#AEC6CF"  # shock shading colour
 
@@ -96,9 +105,9 @@ def plot_covid_rcre(save_dir="artifacts"):
     ax1 = axes[0]
     ax1.plot(price.index, price.values, color="#1a1a2e", linewidth=1.2)
     ax1.axvspan(shock_start, shock_end, alpha=0.20, color=sc, label="Acute shock window")
-    ax1.set_ylabel("S&P 500 Price (USD)", fontsize=9)
-    ax1.legend(fontsize=8, loc="lower left")
-    ax1.set_title("Panel A: S&P 500 Price", fontsize=9, loc="left", style="italic")
+    ax1.set_ylabel("S&P 500 Price (USD)", fontsize=15, fontweight="bold")
+    ax1.legend(fontsize=12, loc="lower left")
+    ax1.set_title("Panel A: S&P 500 Price", fontsize=13, loc="left", style="italic", fontweight="bold")
     for s in ["top", "right"]: ax1.spines[s].set_visible(False)
 
     # Panel B: Baseline VaR
@@ -106,10 +115,10 @@ def plot_covid_rcre(save_dir="artifacts"):
     ax2.plot(var_c.index, var_c.values, color="#E74C3C", linewidth=1.1,
              label="Baseline HS-VaR (delayed, alpha=0.99)")
     ax2.axvspan(shock_start, shock_end, alpha=0.20, color=sc)
-    ax2.set_ylabel("VaR (portfolio fraction)", fontsize=9)
-    ax2.legend(fontsize=8, loc="upper left")
+    ax2.set_ylabel("VaR (portfolio fraction)", fontsize=15, fontweight="bold")
+    ax2.legend(fontsize=12, loc="upper left")
     ax2.set_title("Panel B: Baseline HS-VaR  (252-day rolling, stale during shock)",
-                  fontsize=9, loc="left", style="italic")
+                  fontsize=13, loc="left", style="italic", fontweight="bold")
     for s in ["top", "right"]: ax2.spines[s].set_visible(False)
 
     # Panel C: RCRE vs XGB scores
@@ -138,14 +147,19 @@ def plot_covid_rcre(save_dir="artifacts"):
             ax3.axvline(bd, color="#E74C3C", linewidth=0.5, alpha=0.35)
 
     ax3.axvspan(shock_start, shock_end, alpha=0.20, color=sc)
-    ax3.set_ylabel("Failure probability", fontsize=9)
-    ax3.set_xlabel("Date", fontsize=9)
-    ax3.legend(fontsize=8, loc="upper left", ncol=2, framealpha=0.85)
+    ax3.set_ylabel("Failure probability", fontsize=15, fontweight="bold")
+    ax3.set_xlabel("Date", fontsize=15, fontweight="bold")
+    ax3.legend(fontsize=12, loc="upper left", ncol=2, framealpha=0.85)
     ax3.set_title(
         "Panel C: RCRE Score  (red verticals = actual breach days, shading = gating zones)",
-        fontsize=9, loc="left", style="italic"
+        fontsize=13, loc="left", style="italic", fontweight="bold"
     )
     for s in ["top", "right"]: ax3.spines[s].set_visible(False)
+
+    for ax in axes:
+        ax.tick_params(axis="both", labelsize=14.5)
+        for label in ax.get_xticklabels() + ax.get_yticklabels():
+            label.set_fontweight('bold')
 
     plt.tight_layout(rect=[0, 0, 1, 0.97])
     out_path = f"{save_dir}/fig4_covid_rcre.png"

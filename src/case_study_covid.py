@@ -109,9 +109,11 @@ def _plot_timeseries(df: pd.DataFrame, shock_start: str, shock_end: str, out_png
     ax1.axvspan(s, e, alpha=0.2)
 
     ax1.set_title(title)
-    ax1.set_xlabel("date")
-    ax1.set_ylabel("calibrated failure probability s_t")
-    ax2.set_ylabel("next-day loss L_{t+1}")
+    ax1.set_xlabel("date", fontsize=12)
+    ax1.set_ylabel("calibrated failure probability s_t", fontsize=12)
+    ax2.set_ylabel("next-day loss L_{t+1}", fontsize=12)
+    ax1.tick_params(axis="both", labelsize=12)
+    ax2.tick_params(axis="both", labelsize=12)
 
     fig.tight_layout()
     fig.savefig(out_png, dpi=200)
@@ -126,8 +128,9 @@ def _plot_breach_magnitude(df: pd.DataFrame, out_png: str, title: str):
     ax.hist(base.dropna().values, bins=30, alpha=0.6, label="baseline breach magnitudes")
     ax.hist(gated.dropna().values, bins=30, alpha=0.6, label="gated breach magnitudes")
     ax.set_title(title)
-    ax.set_xlabel("loss magnitude")
-    ax.set_ylabel("count")
+    ax.set_xlabel("loss magnitude", fontsize=12)
+    ax.set_ylabel("count", fontsize=12)
+    ax.tick_params(axis="both", labelsize=12)
     ax.legend()
 
     fig.tight_layout()

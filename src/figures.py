@@ -3,6 +3,10 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['axes.labelsize'] = 12
+matplotlib.rcParams['xtick.labelsize'] = 12
+matplotlib.rcParams['ytick.labelsize'] = 12
 
 
 def _pick_col(df, candidates):
@@ -66,12 +70,14 @@ def make_figure4(
     ax2 = ax1.twinx()
 
     ax1.plot(t, p, linewidth=1.8)
-    ax1.set_ylabel("Reliability probability $p_t$")
+    ax1.set_ylabel("Reliability probability $p_t$", fontsize=12)
     ax1.set_ylim(0, 1)
+    ax1.tick_params(axis="both", labelsize=12)
 
     if L is not None:
         ax2.plot(t, L, linewidth=1.2, alpha=0.9)
-        ax2.set_ylabel("Realized loss $L_t$")
+        ax2.set_ylabel("Realized loss $L_t$", fontsize=12)
+        ax2.tick_params(axis="both", labelsize=12)
         if exceed_mask.any():
             ax2.scatter(np.array(t)[exceed_mask], L[exceed_mask], s=18, c="red", zorder=5)
 
@@ -155,15 +161,17 @@ def make_figure5(
 
     ax1.set_xlim(0, 1)
     ax1.set_ylim(0, 1)
-    ax1.set_xlabel("Predicted unreliability probability (bin center)")
-    ax1.set_ylabel("Empirical unreliability rate")
+    ax1.set_xlabel("Predicted unreliability probability (bin center)", fontsize=12)
+    ax1.set_ylabel("Empirical unreliability rate", fontsize=12)
+    ax1.tick_params(axis="both", labelsize=12)
     ax1.set_title("Figure 5: Calibration (reliability diagram)")
 
     ax2 = plt.subplot(2, 1, 2)
     ax2.bar(centers, counts / max(1, int(np.sum(counts))), width=(1.0 / n_bins) * 0.9)
     ax2.set_xlim(0, 1)
-    ax2.set_xlabel("Predicted probability bins")
-    ax2.set_ylabel("Fraction of samples")
+    ax2.set_xlabel("Predicted probability bins", fontsize=12)
+    ax2.set_ylabel("Fraction of samples", fontsize=12)
+    ax2.tick_params(axis="both", labelsize=12)
     ax2.set_title("Probability mass across bins")
 
     fig.tight_layout()
@@ -238,7 +246,8 @@ def make_figure3(
         for a, b in zip(starts, ends):
             ax.axvspan(np.array(t)[a], np.array(t)[b], alpha=0.15)
 
-    ax.set_ylabel(f"Rolling volatility (window={vol_window})")
+    ax.set_ylabel(f"Rolling volatility (window={vol_window})", fontsize=12)
+    ax.tick_params(axis="both", labelsize=12)
     ax.set_title("Figure 3: Regime segmentation / stress windows (top-quantile volatility)")
     ax.legend(loc="upper right")
     fig.tight_layout()

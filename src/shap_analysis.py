@@ -19,6 +19,15 @@ Why SHAP matters here:
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+import matplotlib
+matplotlib.rcParams['font.family'] = 'serif'
+matplotlib.rcParams['font.serif'] = ['Times New Roman', 'DejaVu Serif', 'Liberation Serif', 'serif']
+matplotlib.rcParams['font.weight'] = 'bold'
+matplotlib.rcParams['axes.labelweight'] = 'bold'
+matplotlib.rcParams['xtick.labelsize'] = 13.5
+matplotlib.rcParams['ytick.labelsize'] = 13.5
+
 import matplotlib.gridspec as gridspec
 import shap
 import os
@@ -85,6 +94,10 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
     )
     plt.title("SHAP Summary: Feature Impact on Failure Probability",
               fontsize=13, fontweight="bold", pad=12)
+    ax = plt.gca()
+    ax.tick_params(axis="both", labelsize=13.5)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontweight('bold')
     plt.tight_layout()
     fig.savefig(f"{save_dir}/shap_summary.png", dpi=150, bbox_inches="tight")
     plt.close()
@@ -103,10 +116,13 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
         color=colors[::-1],
         edgecolor="white", linewidth=0.5
     )
-    ax.set_xlabel("Mean |SHAP value|", fontsize=11)
+    ax.set_xlabel("Mean |SHAP value|", fontsize=14, fontweight="bold")
     ax.set_title("Feature Importance (Mean Absolute SHAP Value)",
                  fontsize=13, fontweight="bold")
     ax.axvline(0, color="black", linewidth=0.8)
+    ax.tick_params(axis="both", labelsize=13.5)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontweight('bold')
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
     plt.tight_layout()
@@ -129,15 +145,21 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
             rasterized=True
         )
         cbar = plt.colorbar(sc, ax=ax)
-        cbar.set_label("EWMA Volatility (σ̂)", fontsize=10)
+        cbar.set_label("EWMA Volatility (σ̂)", fontsize=13, fontweight="bold")
+        cbar.ax.tick_params(labelsize=12.5)
+        for label in cbar.ax.get_yticklabels():
+            label.set_fontweight('bold')
         ax.axhline(0, color="black", linewidth=0.8, linestyle="--")
-        ax.set_xlabel("Risk–Volatility Divergence (R̂ − σ̂)", fontsize=11)
-        ax.set_ylabel("SHAP value", fontsize=11)
+        ax.set_xlabel("Risk–Volatility Divergence (R̂ − σ̂)", fontsize=14, fontweight="bold")
+        ax.set_ylabel("SHAP value", fontsize=14, fontweight="bold")
         ax.set_title(
             "SHAP Dependence: Risk–Vol Divergence\n"
             "(colour = EWMA volatility level)",
             fontsize=13, fontweight="bold"
         )
+        ax.tick_params(axis="both", labelsize=13.5)
+        for label in ax.get_xticklabels() + ax.get_yticklabels():
+            label.set_fontweight('bold')
         for spine in ["top", "right"]:
             ax.spines[spine].set_visible(False)
         plt.tight_layout()
@@ -161,7 +183,7 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
         axes[0].plot(X_covid.index, s_covid.values, color="#C0392B", linewidth=1.5)
         axes[0].axhline(cfg.tau_high, color="gray", linestyle="--",
                         linewidth=0.9, label=f"τ_high={cfg.tau_high}")
-        axes[0].set_ylabel("Reliability Score", fontsize=10)
+        axes[0].set_ylabel("Reliability Score", fontsize=12)
         axes[0].set_title("COVID Crash: SHAP Feature Contributions",
                           fontsize=13, fontweight="bold")
         axes[0].legend(fontsize=9)
@@ -176,8 +198,8 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
                         alpha=0.85, width=1)
             bottom += contrib
         axes[1].axhline(0, color="black", linewidth=0.8)
-        axes[1].set_ylabel("SHAP contribution", fontsize=10)
-        axes[1].set_xlabel("Date", fontsize=10)
+        axes[1].set_ylabel("SHAP contribution", fontsize=12)
+        axes[1].set_xlabel("Date", fontsize=12)
         axes[1].legend(fontsize=8, loc="upper left", ncol=2)
 
         plt.tight_layout()
@@ -191,10 +213,13 @@ def run_shap_analysis(save_dir: str = "artifacts") -> dict:
     shap_df.to_csv(f"{save_dir}/shap_values.csv")
     print(f"  Saved: {save_dir}/shap_values.csv")
 
-    # ── 9. Print summary ─────────────────────────────────────
     print("\n=== SHAP FEATURE IMPORTANCE ===")
     for i in order:
-        print(f"  {display_names[i]:<35} mean|SHAP| = {mean_abs[i]:.6f}")
+        try:
+            print(f"  {display_names[i]:<35} mean|SHAP| = {mean_abs[i]:.6f}")
+        except UnicodeEncodeError:
+            safe_name = display_names[i].encode('ascii', errors='replace').decode('ascii')
+            print(f"  {safe_name:<35} mean|SHAP| = {mean_abs[i]:.6f}")
 
     return {
         "shap_values":    shap_values,

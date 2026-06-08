@@ -12,6 +12,7 @@ class Config:
     alpha:  float = 0.99
     window: int   = 252
     delay:  int   = 1
+    base_var_type: str = "hs"  # "hs" or "garch"
 
     # ── Reliability label ─────────────────────────────────────
     # gamma > 1 targets SEVERE failures (losses > 1.5x VaR)

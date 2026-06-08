@@ -29,7 +29,7 @@ def garch_var_with_fallback(returns: pd.Series, alpha: float, window: int) -> pd
             continue
         try:
             am = arch_model(window_r, mean="Zero", vol="GARCH", p=1, q=1, dist="normal")
-            res = am.fit(disp="off")
+            res = am.fit(disp="off", show_warning=False)
             f = res.forecast(horizon=1, reindex=False)
             sigma = float(np.sqrt(f.variance.values[-1, 0]) / 100.0)
             out.iloc[t] = z * sigma

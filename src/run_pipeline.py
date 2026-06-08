@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from config import Config
 from data_factory import fetch_ohlcv, compute_returns
-from risk_models import rolling_historical_var, ewma_vol
+from risk_models import rolling_historical_var, ewma_vol, garch_var_with_fallback
 from features import build_reliability_features
 from reliability import make_labels_next_day, train_reliability_xgb, predict_calibrated
 from baselines import run_all_baselines
@@ -22,7 +22,12 @@ def main():
     r = df["logret"].astype(float)
     r_delayed = r.shift(cfg.delay)
 
-    df["var_base"]  = rolling_historical_var(r_delayed, cfg.alpha, cfg.window)
+    if cfg.base_var_type == "garch":
+        print("Calculating GARCH(1,1) VaR (this may take 1-2 minutes)...")
+        df["var_base"]  = garch_var_with_fallback(r_delayed, cfg.alpha, cfg.window)
+    else:
+        print("Calculating Historical Simulation VaR...")
+        df["var_base"]  = rolling_historical_var(r_delayed, cfg.alpha, cfg.window)
     df["sigma_hat"] = ewma_vol(r_delayed.fillna(0.0))
 
     X = build_reliability_features(
@@ -162,12 +167,12 @@ def main():
     )
 
     print("\n=== RESULTS SUMMARY ===")
-    print(f"XGBoost  — AUC: {fit_metrics['auc_test']:.3f}  PR-AUC: {fit_metrics['prauc_test']:.3f}  Brier: {fit_metrics['brier_test']:.4f}")
-    print(f"RCRE     — AUC: {rcre_metrics['auc_test']:.3f}  PR-AUC: {rcre_metrics['prauc_test']:.3f}  Brier: {rcre_metrics['brier_test']:.4f}")
-    print(f"LR       — AUC: {baseline_results['LogisticRegression']['auc_test']:.3f}")
-    print(f"VolThresh— AUC: {baseline_results['VolThreshold']['auc_test']:.3f}")
-    print(f"XGBoost ESB:  {decision_metrics_xgb['esb_base']:.4f} → {decision_metrics_xgb['esb_gated']:.4f}")
-    print(f"RCRE    ESB:  {decision_metrics_rcre['esb_base']:.4f} → {decision_metrics_rcre['esb_gated']:.4f}")
+    print(f"XGBoost  - AUC: {fit_metrics['auc_test']:.3f}  PR-AUC: {fit_metrics['prauc_test']:.3f}  Brier: {fit_metrics['brier_test']:.4f}")
+    print(f"RCRE     - AUC: {rcre_metrics['auc_test']:.3f}  PR-AUC: {rcre_metrics['prauc_test']:.3f}  Brier: {rcre_metrics['brier_test']:.4f}")
+    print(f"LR       - AUC: {baseline_results['LogisticRegression']['auc_test']:.3f}")
+    print(f"VolThresh- AUC: {baseline_results['VolThreshold']['auc_test']:.3f}")
+    print(f"XGBoost ESB:  {decision_metrics_xgb['esb_base']:.4f} -> {decision_metrics_xgb['esb_gated']:.4f}")
+    print(f"RCRE    ESB:  {decision_metrics_rcre['esb_base']:.4f} -> {decision_metrics_rcre['esb_gated']:.4f}")
 
 if __name__ == "__main__":
     main()
